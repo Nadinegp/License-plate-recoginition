@@ -1,0 +1,87 @@
+import java.util.ArrayList;
+import java.util.Stack;
+
+public class Graph {
+    private int V;
+    private ArrayList<Integer>[] adjList;
+
+    public Graph(int vertices) {
+        V = vertices;
+        adjList = new ArrayList[V];
+        for (int i = 0; i < V; i++) {
+            adjList[i] = new ArrayList<>();
+        }
+    }
+
+    public void addEdge(int src, int dest) {
+        adjList[src].add(dest);
+        adjList[dest].add(src);
+    }
+
+    public boolean isConnected() {
+        boolean[] visited = new boolean[V];
+        dfs(0, visited);
+
+        for (boolean v : visited) {
+            if (!v) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean isAcyclic() {
+        boolean[] visited = new boolean[V];
+        for (int i = 0; i < V; i++) {
+            if (!visited[i]) {
+                if (isCyclicUtil(i, visited, -1)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private void dfs(int v, boolean[] visited) {
+        visited[v] = true;
+        for (int i : adjList[v]) {
+            if (!visited[i]) {
+                dfs(i, visited);
+            }
+        }
+    }
+
+    private boolean isCyclicUtil(int v, boolean[] visited, int parent) {
+        visited[v] = true;
+        for (int i : adjList[v]) {
+            if (!visited[i]) {
+                if (isCyclicUtil(i, visited, v)) {
+                    return true;
+                }
+            } else if (i != parent) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static void main(String[] args) {
+        Graph graph = new Graph(5);
+        graph.addEdge(0, 1);
+        graph.addEdge(0, 2);
+        graph.addEdge(1, 2);
+        graph.addEdge(3, 4);
+
+        System.out.println("Adjacency List:");
+        for (int i = 0; i < graph.V; i++) {
+            System.out.print(i + ": ");
+            for (int j : graph.adjList[i]) {
+                System.out.print(j + " ");
+            }
+            System.out.println();
+        }
+
+        System.out.println("Is connected: " + graph.isConnected());
+        System.out.println("Is acyclic: " + graph.isAcyclic());
+    }
+}
