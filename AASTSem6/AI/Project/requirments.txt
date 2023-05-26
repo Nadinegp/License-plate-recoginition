@@ -1,0 +1,7 @@
+easyocr
+opencv-python-headless
+opencv-python-contrib
+opencv-python
+os
+ultralytics
+pandas
